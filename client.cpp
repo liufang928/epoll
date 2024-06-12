@@ -70,12 +70,15 @@ Client::~Client()
 void Client::Send(std::string msg)
 {
     char *buff = new char[msg.length() + 1];
-    strcpy(buff,msg.c_str());
+    strcpy(buff, msg.c_str());
     int result = send(cfd, buff, strlen(buff), 0);
     std::cerr << "send :" << msg << "   ---->   result : " << result << std::endl;
 }
 int main()
 {
     Client client;
-    client.Send("hello");
+    for (int i = 0; i < 1000000; i++)
+    {
+        client.Send("hello");
+    }
 }
