@@ -6,6 +6,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <arpa/inet.h>
+#include"message.hpp"
 
 #define IP "127.0.0.1"
 #define PORT 8080
@@ -20,6 +21,7 @@ public:
     Client();
     ~Client();
     void Send(std::string msg);
+    void Send(Header* msg);
 };
 
 Client::Client()
@@ -74,11 +76,22 @@ void Client::Send(std::string msg)
     int result = send(cfd, buff, strlen(buff), 0);
     std::cerr << "send :" << msg << "   ---->   result : " << result << std::endl;
 }
+void Client::Send(Header* msg)
+{
+    int result = send(cfd, (const char*)msg, msg->len, 0);
+    std::cerr << "send :" << MsgType::ToString(msg->type) << "   ---->   result : " << result << std::endl;
+}
+
 int main()
 {
     Client client;
+
+    MessageLogin login;
+    strcpy(login.username,"zsh");
+    strcpy(login.password,"123x");
+
     for (int i = 0; i < 1000000; i++)
     {
-        client.Send("hello");
+        client.Send(&login);
     }
 }

@@ -5,8 +5,12 @@
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <atomic>
+#include "message.hpp"
+
 
 #define PORT 8080
+std::atomic<int> recvCount(1);  //统计收到的包数量
 
 int main()
 {
@@ -90,7 +94,8 @@ int main()
                 }
                 // 注册client_fd到epoll实例
                 event.data.fd = client_fd;
-                event.events = EPOLLIN | EPOLLET;
+                //event.events = EPOLLIN | EPOLLET;
+                event.events = EPOLLIN;
                 if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &event) == -1) {
                     std::cerr << "Failed to add client_fd to epoll." << std::endl;
                     close(client_fd);
@@ -106,9 +111,12 @@ int main()
                 } else if (count == 0) {
                     // 客户端关闭了连接
                     close(events[i].data.fd);
+                    std::cerr << "client[" << events[i].data.fd << "] closed!" << std::endl;
                 } else {
+                    MessageLogin* login = (MessageLogin*)buffer;
                     // 输出接收到的数据
-                    std::cout << "Received data: " << std::string(buffer, count) << "    ---->     dataLen : " << count << std::endl;
+                    //std::cout << "Received data: " << std::string(buffer, count) << "    ---->     dataLen : " << count << std::endl;
+                    std::cout << "Received data: [" << login->username <<"] [" << login->password << "]    ---->    " << recvCount++ << std::endl;
                 }
             }
         }
