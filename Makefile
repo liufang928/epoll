@@ -1,5 +1,5 @@
 GXX = g++
-GXXFLAGS = -Wall -std=c++11
+GXXFLAGS = -Wall -std=c++11 -pthread
 
 Server = bin/server 
 Client = bin/client
