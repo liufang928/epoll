@@ -63,4 +63,5 @@ public:
     char username[32];
     char password[32];
     char data[952];
+
 };
